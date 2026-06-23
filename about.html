@@ -1,1 +1,286 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Kevin Granillo</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .page-hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 2rem 3rem;
+    }
+
+    .page-hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-hero .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    /* ---- BIO SECTION ---- */
+    .bio-grid {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    @media (max-width: 640px) {
+      .bio-grid { grid-template-columns: 1fr; }
+    }
+
+    .bio-text p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .bio-text p strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ---- INFO BOX ---- */
+    .info-box {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg2);
+      padding: 1.5rem;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+
+    .info-row:last-child { border-bottom: none; }
+
+    .info-key {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .info-val { color: var(--text); font-weight: 500; }
+
+    /* ---- EDUCATION ---- */
+    .edu-section {
+      max-width: 900px;
+      margin: 4rem auto 0;
+      padding: 0 2rem;
+    }
+
+    .edu-card {
+      margin-top: 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg2);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .edu-card h3 { font-size: 1rem; color: #fff; }
+    .edu-card p { color: var(--muted); font-size: 0.88rem; margin-top: 0.2rem; }
+
+    .edu-year {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+
+    /* ---- WHAT I BRING ---- */
+    .bring-section {
+      max-width: 900px;
+      margin: 4rem auto 0;
+      padding: 0 2rem;
+    }
+
+    .bring-grid {
+      margin-top: 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .bring-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg2);
+      padding: 1.25rem;
+    }
+
+    .bring-card .icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .bring-card h4 {
+      font-size: 0.9rem;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    .bring-card p {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* ---- CONTACT ---- */
+    .contact-section {
+      max-width: 900px;
+      margin: 4rem auto 0;
+      padding: 0 2rem;
+    }
+
+    .contact-links {
+      margin-top: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">KG_</span>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="projects.html">Projects</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="section-label">About Me</div>
+  <h1>Electrical Engineer<br>& Hardware Builder</h1>
+  <p class="subtitle">Turning circuit diagrams into working systems.</p>
+</section>
+
+<!-- BIO -->
+<div class="bio-grid">
+  <div class="bio-text">
+    <p>
+      I'm <strong>Kevin Granillo</strong>, a recent Electrical Engineering graduate with a passion
+      for the intersection of hardware and software. I thrive in environments where getting
+      something to actually <em>work</em> — reliably, in the real world — is the goal.
+    </p>
+    <p>
+      My focus areas are <strong>embedded systems</strong>, <strong>PCB design</strong>, and
+      <strong>signal processing</strong>. I've designed custom boards, written low-level
+      firmware, integrated multi-sensor systems, and debugged hardware-software integration
+      issues under real constraints.
+    </p>
+    <p>
+      I enjoy the full development cycle: from schematic capture to firmware, testing, and
+      iteration. Clean, well-documented code and hardware that's built to last are things I
+      care about.
+    </p>
+  </div>
+
+  <div class="info-box">
+    <div class="info-row">
+      <span class="info-key">Role</span>
+      <span class="info-val">EE Graduate / New Grad</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Focus</span>
+      <span class="info-val">Embedded & Hardware</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Languages</span>
+      <span class="info-val">C, C++, Python</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Tools</span>
+      <span class="info-val">KiCad, MATLAB, Git</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Email</span>
+      <span class="info-val"><a href="mailto:Kevingranillo3723@gmail.com">Kevingranillo3723@gmail.com</a></span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">LinkedIn</span>
+      <span class="info-val"><a href="https://www.linkedin.com/in/kevingranillo/" target="_blank">kevingranillo</a></span>
+    </div>
+  </div>
+</div>
+
+<!-- EDUCATION -->
+<section class="edu-section">
+  <div class="section-label">Education</div>
+  <div class="edu-card">
+    <div>
+      <h3>Bachelor of Science — Electrical Engineering</h3>
+      <p>Update with your university name here</p>
+    </div>
+    <span class="edu-year">2025</span>
+  </div>
+</section>
+
+<!-- WHAT I BRING -->
+<section class="bring-section">
+  <div class="section-label">What I Bring</div>
+  <div class="bring-grid">
+    <div class="bring-card">
+      <div class="icon">⚡</div>
+      <h4>Hardware Design</h4>
+      <p>Custom PCB layout, schematic capture, power management, and hardware debugging.</p>
+    </div>
+    <div class="bring-card">
+      <div class="icon">💾</div>
+      <h4>Embedded Firmware</h4>
+      <p>Low-level C/C++ on microcontrollers, real-time control loops, and peripheral drivers.</p>
+    </div>
+    <div class="bring-card">
+      <div class="icon">📡</div>
+      <h4>Sensor Systems</h4>
+      <p>Integration of ultrasonic, IR, color, and other sensors with embedded platforms.</p>
+    </div>
+    <div class="bring-card">
+      <div class="icon">📊</div>
+      <h4>Signal Processing</h4>
+      <p>FFT analysis, frequency-domain characterization, and MATLAB-based signal work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section">
+  <div class="section-label">Get in Touch</div>
+  <div class="contact-links">
+    <a href="mailto:Kevingranillo3723@gmail.com" class="btn btn-primary">Email Me</a>
+    <a href="https://www.linkedin.com/in/kevingranillo/" target="_blank" class="btn btn-ghost">LinkedIn</a>
+    <a href="projects.html" class="btn btn-ghost">See My Projects</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© 2025 Kevin Granillo &nbsp;·&nbsp; <a href="mailto:Kevingranillo3723@gmail.com">Kevingranillo3723@gmail.com</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
