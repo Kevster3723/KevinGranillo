@@ -160,6 +160,22 @@
       transition: background 0.15s;
     }
 
+    /* ---- EMBEDDED VIDEO ---- */
+    .video-wrap {
+      margin-top: 1.25rem;
+      border-radius: 8px;
+      overflow: hidden;
+      /* Portrait aspect ratio to match the Shorts video (428x761 ≈ 9:16) */
+      max-width: 280px;
+    }
+
+    .video-wrap iframe {
+      display: block;
+      width: 100%;
+      aspect-ratio: 428 / 761;
+      border: none;
+    }
+
     .project-link:hover {
       background: rgba(0,194,255,0.08);
       text-decoration: none;
@@ -231,6 +247,17 @@
       </div>
     </details>
 
+    <div class="video-wrap">
+      <iframe
+        src="https://www.youtube.com/embed/ut8rtNUcG8U"
+        title="Payload Transportation"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+      </iframe>
+    </div>
+
     <div class="card-footer">
       <div class="project-tags">
         <span class="tag">Teensy 4.1</span>
@@ -239,7 +266,6 @@
         <span class="tag">Control Systems</span>
         <span class="tag">Robotics</span>
       </div>
-      <a href="https://youtube.com/shorts/ut8rtNUcG8U?feature=share" target="_blank" class="project-link">▶ Watch Demo</a>
     </div>
   </div>
 
@@ -299,7 +325,7 @@
 
 <footer>
   <div class="container">
-    <p>© 2026 Kevin Granillo &nbsp;·&nbsp; <a href="mailto:Kevingranillo3723@gmail.com">Kevingranillo3723@gmail.com</a></p>
+    <p>© 2025 Kevin Granillo &nbsp;·&nbsp; <a href="mailto:Kevingranillo3723@gmail.com">Kevingranillo3723@gmail.com</a></p>
   </div>
 </footer>
 
