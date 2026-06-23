@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kevster3723.github.io/KevinGranillo/sitemap.xml
