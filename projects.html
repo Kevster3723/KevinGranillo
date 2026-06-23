@@ -1,1 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects — Kevin Granillo</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .page-hero {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 5rem 2rem 3rem;
+    }
 
+    .page-hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-hero .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    /* ---- PROJECT CARDS ---- */
+    .projects-list {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg2);
+      padding: 2rem;
+      transition: border-color 0.2s;
+    }
+
+    .project-card:hover {
+      border-color: var(--accent2);
+    }
+
+    .project-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .project-card h2 {
+      font-size: 1.15rem;
+      color: #fff;
+    }
+
+    .project-card .project-type {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding-top: 0.2rem;
+      white-space: nowrap;
+    }
+
+    .project-card .desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+      max-width: 680px;
+    }
+
+    /* ---- EXPANDABLE DETAILS ---- */
+    details summary {
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      list-style: none;
+      margin-bottom: 0.5rem;
+      user-select: none;
+    }
+
+    details summary::-webkit-details-marker { display: none; }
+
+    details summary::before {
+      content: '▶  ';
+      font-size: 0.65rem;
+    }
+
+    details[open] summary::before {
+      content: '▼  ';
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .detail-col h4 {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+
+    .detail-col ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .detail-col ul li {
+      font-size: 0.85rem;
+      color: var(--muted);
+      padding: 0.2rem 0;
+      padding-left: 1em;
+      position: relative;
+    }
+
+    .detail-col ul li::before {
+      content: '–';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    /* ---- TAGS & LINKS ROW ---- */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+    .project-link {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      border: 1px solid rgba(0,194,255,0.3);
+      padding: 0.3em 0.8em;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+
+    .project-link:hover {
+      background: rgba(0,194,255,0.08);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">KG_</span>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="projects.html" class="active">Projects</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="section-label">Projects</div>
+  <h1>Things I've Built</h1>
+  <p class="subtitle">Hardware, firmware, and everything in between.</p>
+</section>
+
+<!-- PROJECT LIST -->
+<div class="projects-list">
+
+  <!-- PROJECT 1: Autonomous Robot -->
+  <div class="project-card">
+    <div class="project-header">
+      <h2>Autonomous Payload Transportation System</h2>
+      <span class="project-type">Robotics · Embedded</span>
+    </div>
+    <p class="desc">
+      A fully autonomous robot that detects, picks up, and transports payloads using sensor fusion
+      and omni-directional drive. Real-time embedded motor control with multi-sensor environment
+      decision-making running on a Teensy 4.1.
+    </p>
+
+    <details>
+      <summary>View Details</summary>
+      <div class="detail-grid">
+        <div class="detail-col">
+          <h4>What It Does</h4>
+          <ul>
+            <li>Autonomous navigation and payload delivery</li>
+            <li>Omni-directional movement via omni-wheel drive</li>
+            <li>Multi-sensor environment detection</li>
+            <li>Real-time embedded motor control</li>
+          </ul>
+        </div>
+        <div class="detail-col">
+          <h4>My Contributions</h4>
+          <ul>
+            <li>Designed power and sensor interface circuitry</li>
+            <li>Developed embedded firmware for sensing and control</li>
+            <li>Integrated ultrasonic, IR, and color sensors</li>
+            <li>Debugged hardware/software integration</li>
+          </ul>
+        </div>
+        <div class="detail-col">
+          <h4>Results</h4>
+          <ul>
+            <li>Successful autonomous pickup and delivery</li>
+            <li>Stable and repeatable navigation</li>
+            <li>Improved reliability through iterative debugging</li>
+          </ul>
+        </div>
+      </div>
+    </details>
+
+    <div class="card-footer">
+      <div class="project-tags">
+        <span class="tag">Teensy 4.1</span>
+        <span class="tag">Embedded C/C++</span>
+        <span class="tag">Sensor Fusion</span>
+        <span class="tag">Control Systems</span>
+        <span class="tag">Robotics</span>
+      </div>
+      <a href="https://youtube.com/shorts/ut8rtNUcG8U?feature=share" target="_blank" class="project-link">▶ Watch Demo</a>
+    </div>
+  </div>
+
+  <!-- PROJECT 2: PCB -->
+  <div class="project-card">
+    <div class="project-header">
+      <h2>Embedded Sensing System PCB</h2>
+      <span class="project-type">PCB Design · Hardware</span>
+    </div>
+    <p class="desc">
+      A custom-designed PCB integrating Bluetooth connectivity, power management circuitry,
+      and sensor interfaces. Designed for reliability and low power consumption with a focus
+      on hardware-software co-design.
+    </p>
+
+    <div class="card-footer">
+      <div class="project-tags">
+        <span class="tag">PCB Design</span>
+        <span class="tag">Bluetooth</span>
+        <span class="tag">Power Management</span>
+        <span class="tag">Sensor Integration</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT 3: FFT -->
+  <div class="project-card">
+    <div class="project-header">
+      <h2>FFT Signal Analysis</h2>
+      <span class="project-type">Signal Processing · MATLAB</span>
+    </div>
+    <p class="desc">
+      Implementation and analysis of the Fast Fourier Transform algorithm for characterizing
+      signals in the frequency domain. Explored spectral leakage, windowing functions, and
+      frequency-domain behavior of real-world signals.
+    </p>
+
+    <div class="card-footer">
+      <div class="project-tags">
+        <span class="tag">MATLAB</span>
+        <span class="tag">FFT</span>
+        <span class="tag">Signal Processing</span>
+        <span class="tag">Frequency Analysis</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD MORE PLACEHOLDER -->
+  <div class="project-card" style="border-style: dashed; opacity: 0.45;">
+    <div class="project-header">
+      <h2 style="color: var(--muted);">More projects coming soon</h2>
+    </div>
+    <p class="desc">Add your next project here by editing <code style="font-family:var(--mono); font-size:0.82rem;">projects.html</code>.</p>
+  </div>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>© 2025 Kevin Granillo &nbsp;·&nbsp; <a href="mailto:Kevingranillo3723@gmail.com">Kevingranillo3723@gmail.com</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
