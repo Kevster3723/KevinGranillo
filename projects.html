@@ -176,6 +176,103 @@
       border: none;
     }
 
+
+    /* ---- CODE VIEWER ---- */
+    .code-details {
+      margin-top: 1rem;
+    }
+
+    .code-details summary {
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      list-style: none;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4em 0.9em;
+      border: 1px solid rgba(0,112,243,0.3);
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+
+    .code-details summary::-webkit-details-marker { display: none; }
+    .code-details summary:hover { background: rgba(0,112,243,0.06); }
+
+    .code-details summary .arrow { transition: transform 0.2s; display: inline-block; }
+    .code-details[open] summary .arrow { transform: rotate(90deg); }
+
+    .code-viewer {
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f4f6f9;
+    }
+
+    .code-tabs {
+      display: flex;
+      overflow-x: auto;
+      background: #eaecf0;
+      border-bottom: 1px solid var(--border);
+      scrollbar-width: none;
+    }
+
+    .code-tabs::-webkit-scrollbar { display: none; }
+
+    .code-tab {
+      flex-shrink: 0;
+      padding: 0.5em 1.1em;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      background: transparent;
+      border-top: none;
+      border-left: none;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+
+    .code-tab:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+
+    .code-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background: #fff;
+    }
+
+    .code-panel {
+      display: none;
+      position: relative;
+    }
+
+    .code-panel.active { display: block; }
+
+    .code-panel pre {
+      margin: 0;
+      padding: 1.25rem;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      line-height: 1.65;
+      color: #1e293b;
+      background: transparent;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    /* syntax highlight approximation */
+    .kw  { color: #7c3aed; font-weight: 600; }
+    .cm  { color: #6b7280; font-style: italic; }
+    .fn  { color: #0369a1; }
+    .nm  { color: #b45309; }
+    .pp  { color: #0f766e; }
     .project-link:hover {
       background: rgba(0,194,255,0.08);
       text-decoration: none;
@@ -246,6 +343,388 @@
         </div>
       </div>
     </details>
+
+
+    <details class="code-details">
+      <summary><span class="arrow">▶</span> View Source Code</summary>
+      <div class="code-viewer">
+        <div class="code-tabs">
+          <button class="code-tab active" onclick="showTab(event,'tab-main')">Main.ino</button>
+          <button class="code-tab" onclick="showTab(event,'tab-movement')">VehicleMovement.ino</button>
+          <button class="code-tab" onclick="showTab(event,'tab-color')">Color_Sensor.ino</button>
+          <button class="code-tab" onclick="showTab(event,'tab-gripper')">GripperColorSensor.ino</button>
+          <button class="code-tab" onclick="showTab(event,'tab-line')">LineFollowing.ino</button>
+          <button class="code-tab" onclick="showTab(event,'tab-obstacle')">ObstacleAvoidance.ino</button>
+        </div>
+
+        <!-- Main.ino -->
+        <div class="code-panel active" id="tab-main"><pre>
+<span class="cm">/*
+ * Kevin Granillo, Ivy Newman, Trin Whitehat, Nolan Leist
+ * June 7, 2025
+ *
+ * Pick-up Place and Return: grabs a box, reads size and color,
+ * finds the corresponding path, places it on a platform, then returns.
+ *
+ * Obstacle Avoidance: finds gaps in walls without crossing white boundaries,
+ * stops at the green line at the end.
+ */</span>
+
+<span class="pp">#include</span> &lt;Servo.h&gt;
+
+<span class="pp">#define</span> <span class="nm">gripperButton</span> 25
+<span class="pp">#define</span> <span class="nm">Trig</span> 10
+<span class="pp">#define</span> <span class="nm">Echo</span> 11
+
+<span class="kw">int</span> Lcolor, Rcolor, Mcolor;
+<span class="kw">int</span> BoxColor, gSize;
+Servo Gripper;
+<span class="kw">int</span> actualPosition = 180;
+<span class="kw">int</span> PWMSignal, distance = 0, duration = 0, val1;
+<span class="kw">int</span> Counter = 0, GreenCount = 0;
+
+<span class="kw">enum</span> State_e { Start, InSearch, LineFollow, Place, End, StopProgram };
+<span class="kw">enum</span> State_e gState = Start;
+<span class="kw">enum</span> gripperState { Pickup, Grab, Line };
+<span class="kw">enum</span> gripperState gripperState = Pickup;
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  Color_Sensor_setup();
+  GripperColorSetup();
+  MovementSetup();
+  Gripper.attach(24);
+  pinMode(gripperButton, INPUT_PULLUP);
+  pinMode(Trig, OUTPUT);
+  pinMode(Echo, INPUT);
+  delay(5000); <span class="cm">// Allow sensors to start</span>
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">switch</span>(gState) {
+    <span class="kw">case</span> Start:
+      Ultrasonic();
+      delay(10);
+      <span class="kw">switch</span>(gripperState) {
+        <span class="kw">case</span> Pickup:
+          MovFWD(35);
+          actualPosition = 150;
+          val1 = map(actualPosition, 0, 300, 0, 180);
+          Gripper.write(val1);
+          delay(100);
+          <span class="kw">if</span>(distance &lt; 10) {
+            Stop();
+            gripperState = Grab;
+            actualPosition = 170;
+            val1 = map(actualPosition, 0, 300, 0, 180);
+            Gripper.write(val1);
+            delay(100);
+          }
+        <span class="kw">break</span>;
+        <span class="kw">case</span> Grab:
+          <span class="kw">if</span>(digitalRead(gripperButton) == HIGH) {
+            actualPosition -= 2;
+            val1 = map(actualPosition, 0, 300, 0, 180);
+            Gripper.write(val1);
+            delay(100);
+          } <span class="kw">else</span> {
+            gSize = (actualPosition &lt; 122) ? 0 : 1; <span class="cm">// 0=small, 1=big</span>
+            delay(500);
+            GripperColorSensor();
+            gripperState = Line;
+          }
+          <span class="kw">if</span>(actualPosition &lt; 110) {
+            actualPosition = 150;
+            val1 = map(actualPosition, 0, 300, 0, 180);
+            Gripper.write(val1); delay(100);
+          }
+        <span class="kw">break</span>;
+        <span class="kw">case</span> Line:
+          <span class="kw">if</span>(Lcolor==3 || Mcolor==3 || Rcolor==3) {
+            MovFWD(35); delay(500);
+            (BoxColor==1) ? RotateRt(35) : RotateLft(35);
+            delay(1000); Stop();
+            gState = InSearch;
+          } <span class="kw">else</span> {
+            ColorSensor();
+            MovBKWD(30);
+          }
+        <span class="kw">break</span>;
+      }
+    <span class="kw">break</span>;
+    <span class="kw">case</span> InSearch:
+      ColorSensor(); LineSearch(3);
+    <span class="kw">break</span>;
+    <span class="kw">case</span> LineFollow:
+      Ultrasonic(); delay(10); ColorSensor(); LineFollowing();
+      <span class="kw">if</span>((Lcolor==3&amp;&amp;Mcolor==3)||(Mcolor==3&amp;&amp;Rcolor==3)||(Rcolor==3&amp;&amp;Lcolor==3))
+        gState = Place;
+    <span class="kw">break</span>;
+    <span class="kw">case</span> Place:
+      ColorSensor(); Ultrasonic(); LinePlace();
+    <span class="kw">break</span>;
+    <span class="kw">case</span> End:
+      ColorSensor(); LineFollowing();
+      <span class="kw">if</span>((Lcolor==3&amp;&amp;Mcolor==3)||(Mcolor==3&amp;&amp;Rcolor==3)||(Rcolor==3&amp;&amp;Lcolor==3)) GreenCount++;
+      <span class="kw">if</span>(GreenCount==6) gState = StopProgram;
+    <span class="kw">break</span>;
+    <span class="kw">case</span> StopProgram: Stop(); <span class="kw">break</span>;
+  }
+}
+
+<span class="kw">void</span> <span class="fn">Ultrasonic</span>() {
+  digitalWrite(Trig, LOW); delayMicroseconds(2);
+  digitalWrite(Trig, HIGH); delayMicroseconds(10);
+  digitalWrite(Trig, LOW);
+  duration = pulseIn(Echo, HIGH);
+  distance = duration * 0.034 / 2;
+}</pre></div>
+
+        <!-- VehicleMovement.ino -->
+        <div class="code-panel" id="tab-movement"><pre>
+<span class="cm">// Motor pin definitions — four omni-wheel motors</span>
+<span class="pp">#define</span> <span class="nm">EnableLM2</span> 37  <span class="pp">#define</span> <span class="nm">FLM_in1</span> 38  <span class="pp">#define</span> <span class="nm">FLM_in2</span> 35
+<span class="pp">#define</span> <span class="nm">EnableRM2</span> 36  <span class="pp">#define</span> <span class="nm">RLM_in3</span> 34  <span class="pp">#define</span> <span class="nm">RLM_in4</span> 33
+<span class="pp">#define</span> <span class="nm">EnableLM1</span> 29  <span class="pp">#define</span> <span class="nm">RRM_in1</span> 27  <span class="pp">#define</span> <span class="nm">RRM_in2</span> 30
+<span class="pp">#define</span> <span class="nm">EnableRM1</span> 28  <span class="pp">#define</span> <span class="nm">FRM_in3</span> 31  <span class="pp">#define</span> <span class="nm">FRM_in4</span> 32
+
+<span class="kw">void</span> <span class="fn">MovementSetup</span>() {
+  <span class="cm">// All motor controller pins → OUTPUT, all signals LOW initially</span>
+  <span class="cm">// (pin mode setup omitted for brevity)</span>
+}
+
+<span class="cm">// speed param: 0–100 (PWM duty cycle %)</span>
+<span class="kw">void</span> <span class="fn">Stop</span>() {
+  analogWrite(EnableLM1, 0); analogWrite(EnableRM1, 0);
+  analogWrite(EnableLM2, 0); analogWrite(EnableRM2, 0);
+  <span class="cm">// All direction pins LOW</span>
+}
+
+<span class="kw">void</span> <span class="fn">MovFWD</span>(<span class="kw">float</span> speed) {
+  <span class="kw">float</span> PWMval = 255*(speed/100);
+  analogWrite(EnableLM1, PWMval); analogWrite(EnableRM1, PWMval);
+  analogWrite(EnableLM2, PWMval); analogWrite(EnableRM2, PWMval);
+  <span class="cm">// All four wheels spin CW → forward motion</span>
+  digitalWrite(RRM_in1,HIGH); digitalWrite(RRM_in2,LOW);
+  digitalWrite(FRM_in3,HIGH); digitalWrite(FRM_in4,LOW);
+  digitalWrite(FLM_in1,LOW);  digitalWrite(FLM_in2,HIGH);
+  digitalWrite(RLM_in3,LOW);  digitalWrite(RLM_in4,HIGH);
+}
+
+<span class="kw">void</span> <span class="fn">MovBKWD</span>(<span class="kw">float</span> speed) {
+  <span class="cm">// All four wheels spin CCW → reverse motion</span>
+  <span class="kw">float</span> PWMval = 255*(speed/100);
+  <span class="cm">/* analogWrite + direction pins inverted vs MovFWD */</span>
+}
+
+<span class="kw">void</span> <span class="fn">RotateRt</span>(<span class="kw">float</span> speed) {
+  <span class="cm">// Left wheels forward, right wheels backward → CW vehicle rotation</span>
+}
+
+<span class="kw">void</span> <span class="fn">RotateLft</span>(<span class="kw">float</span> speed) {
+  <span class="cm">// Left wheels backward, right wheels forward → CCW vehicle rotation</span>
+}
+
+<span class="kw">void</span> <span class="fn">StrafeLft</span>(<span class="kw">float</span> speed) {
+  <span class="cm">// Omni-wheel diagonal drive: FR+RL forward, FL+RR backward → strafe left</span>
+}
+
+<span class="kw">void</span> <span class="fn">StrafeRt</span>(<span class="kw">float</span> speed) {
+  <span class="cm">// Opposite diagonal drive → strafe right</span>
+}</pre></div>
+
+        <!-- Color_Sensor.ino -->
+        <div class="code-panel" id="tab-color"><pre>
+<span class="cm">// TCS230/TCS3200 color sensors — Right, Middle, Left</span>
+<span class="pp">#define</span> <span class="nm">RSOut</span> 4  <span class="pp">#define</span> <span class="nm">RS0</span> 3  <span class="pp">#define</span> <span class="nm">RS1</span> 2  <span class="pp">#define</span> <span class="nm">RS2</span> 1  <span class="pp">#define</span> <span class="nm">RS3</span> 0
+<span class="pp">#define</span> <span class="nm">MSOut</span> 14 <span class="pp">#define</span> <span class="nm">MS0</span> 15 <span class="pp">#define</span> <span class="nm">MS1</span> 16 <span class="pp">#define</span> <span class="nm">MS2</span> 17 <span class="pp">#define</span> <span class="nm">MS3</span> 18
+<span class="pp">#define</span> <span class="nm">LSOut</span> 19 <span class="pp">#define</span> <span class="nm">LS0</span> 20 <span class="pp">#define</span> <span class="nm">LS1</span> 21 <span class="pp">#define</span> <span class="nm">LS2</span> 22 <span class="pp">#define</span> <span class="nm">LS3</span> 23
+
+<span class="cm">// Calibrated min/max frequency values per sensor per channel</span>
+<span class="kw">int</span> LredMin=81,  LredMax=528,  RredMin=90,  RredMax=732,  MredMin=83,  MredMax=584;
+<span class="kw">int</span> LgreenMin=79,LgreenMax=560,RgreenMin=89,RgreenMax=805,MgreenMin=80,MgreenMax=628;
+<span class="kw">int</span> LblueMin=68, LblueMax=499, RblueMin=73, RblueMax=680, MblueMin=72, MblueMax=579;
+
+<span class="kw">void</span> <span class="fn">Color_Sensor_setup</span>() {
+  <span class="cm">// Set S0–S3 as OUTPUT, sensorOut as INPUT on each sensor</span>
+  <span class="cm">// Set frequency scaling to 20%: S0=HIGH, S1=LOW</span>
+}
+
+<span class="kw">void</span> <span class="fn">ColorSensor</span>() {
+  <span class="cm">// For each sensor (R, L, M):</span>
+  <span class="cm">//   1. Select color filter via S2/S3 pin combo</span>
+  <span class="cm">//   2. Read pulse width with pulseIn()</span>
+  <span class="cm">//   3. map() frequency → 0–255 color value</span>
+  <span class="cm">//   4. Classify: Black / White / Red / Green / Blue / Other</span>
+
+  <span class="cm">// Example for Right sensor, RED channel:</span>
+  digitalWrite(RS2,LOW); digitalWrite(RS3,LOW);
+  RredFreq  = pulseIn(RSOut, LOW);
+  RredColor = map(RredFreq, RredMin, RredMax, 255, 0);
+
+  <span class="cm">// Classification logic (same pattern for all three sensors):</span>
+  <span class="cm">// 0=Black  1=Red  2=Blue  3=Green  4=White  5=Other</span>
+  <span class="kw">if</span> (RredColor&lt;130 &amp;&amp; RgreenColor&lt;130 &amp;&amp; RblueColor&lt;130)   Rcolor = 0; <span class="cm">// Black</span>
+  <span class="kw">else if</span> (RredColor&gt;250 &amp;&amp; RgreenColor&gt;250 &amp;&amp; RblueColor&gt;250) Rcolor = 4; <span class="cm">// White</span>
+  <span class="kw">else if</span> (RredColor &gt; RgreenColor &amp;&amp; RredColor &gt; RblueColor)  Rcolor = 1; <span class="cm">// Red</span>
+  <span class="kw">else if</span> (RgreenColor &gt; RredColor &amp;&amp; RgreenColor &gt; RblueColor) Rcolor = 3; <span class="cm">// Green</span>
+  <span class="kw">else if</span> (RblueColor &gt; RgreenColor &amp;&amp; RblueColor &gt; RredColor)  Rcolor = 2; <span class="cm">// Blue</span>
+  <span class="kw">else</span>                                                            Rcolor = 5; <span class="cm">// Other</span>
+  <span class="cm">// Repeat for L and M sensors...</span>
+}</pre></div>
+
+        <!-- GripperColorSensor.ino -->
+        <div class="code-panel" id="tab-gripper"><pre>
+<span class="cm">// Dedicated color sensor mounted in the gripper to identify box color</span>
+<span class="pp">#define</span> <span class="nm">GSOut</span> 9
+<span class="pp">#define</span> <span class="nm">GS0</span> 8  <span class="pp">#define</span> <span class="nm">GS1</span> 7
+<span class="pp">#define</span> <span class="nm">GS2</span> 6  <span class="pp">#define</span> <span class="nm">GS3</span> 5
+
+<span class="cm">// Calibrated frequency ranges</span>
+<span class="kw">int</span> GredMin=47,  GredMax=450;
+<span class="kw">int</span> GgreenMin=48,GgreenMax=468;
+<span class="kw">int</span> GblueMin=38, GblueMax=357;
+
+<span class="kw">void</span> <span class="fn">GripperColorSetup</span>() {
+  pinMode(GS0,OUTPUT); pinMode(GS1,OUTPUT);
+  pinMode(GS2,OUTPUT); pinMode(GS3,OUTPUT);
+  pinMode(GSOut,INPUT);
+  digitalWrite(GS0,HIGH); digitalWrite(GS1,LOW); <span class="cm">// 20% scaling</span>
+}
+
+<span class="kw">void</span> <span class="fn">GripperColorSensor</span>() {
+  <span class="cm">// Uses AvgColor() helper for more stable readings</span>
+  digitalWrite(GS2,LOW);  digitalWrite(GS3,LOW);
+  GredFreq   = AvgColor(GSOut);
+  GredColor  = map(GredFreq,  GredMin,  GredMax,  255, 0);
+
+  digitalWrite(GS2,HIGH); digitalWrite(GS3,HIGH);
+  GgreenFreq  = AvgColor(GSOut);
+  GgreenColor = map(GgreenFreq,GgreenMin,GgreenMax,255, 0);
+
+  digitalWrite(GS2,LOW);  digitalWrite(GS3,HIGH);
+  GblueFreq  = AvgColor(GSOut);
+  GblueColor = map(GblueFreq, GblueMin, GblueMax, 255, 0);
+
+  <span class="cm">// Classify and store in BoxColor (1=Red, 2=Blue, etc.)</span>
+  <span class="kw">if</span>      (GredColor&lt;100 &amp;&amp; GgreenColor&lt;100 &amp;&amp; GblueColor&lt;100) BoxColor = 0;
+  <span class="kw">else if</span> (GredColor&gt;200 &amp;&amp; GgreenColor&gt;200 &amp;&amp; GblueColor&gt;200) BoxColor = 4;
+  <span class="kw">else if</span> (GredColor &gt; GgreenColor &amp;&amp; GredColor &gt; GblueColor)   BoxColor = 1; <span class="cm">// Red → rotate right</span>
+  <span class="kw">else if</span> (GgreenColor &gt; GredColor+20 &amp;&amp; GgreenColor &gt; GblueColor) BoxColor = 3;
+  <span class="kw">else if</span> (GblueColor &gt; GgreenColor &amp;&amp; GblueColor &gt; GredColor)  BoxColor = 2; <span class="cm">// Blue → rotate left</span>
+  <span class="kw">else</span>                                                            BoxColor = 5;
+}</pre></div>
+
+        <!-- LineFollowing.ino -->
+        <div class="code-panel" id="tab-line"><pre>
+<span class="kw">extern int</span> gSize;
+<span class="kw">int</span> LineCounter = 0, TurnCount = 0;
+
+<span class="cm">// Follows the line matching BoxColor using three ground-facing color sensors</span>
+<span class="kw">void</span> <span class="fn">LineFollowing</span>() {
+  <span class="kw">if</span>      (Lcolor == BoxColor) RotateLft(30);
+  <span class="kw">else if</span> (Mcolor == BoxColor) MovFWD(30);
+  <span class="kw">else if</span> (Rcolor == BoxColor) RotateRt(30);
+  <span class="kw">else</span>                         MovFWD(30);
+}
+
+<span class="cm">// Rotates in place searching for a specific color line</span>
+<span class="kw">void</span> <span class="fn">LineSearch</span>(<span class="kw">int</span> Color) {
+  <span class="kw">if</span>      (Lcolor == Color) RotateLft(30);
+  <span class="kw">else if</span> (Mcolor == Color) MovFWD(30);
+  <span class="kw">else if</span> (Rcolor == Color) RotateRt(30);
+  <span class="kw">else if</span> (Rcolor == BoxColor &amp;&amp; BoxColor == 1) { <span class="cm">// Found red line</span>
+    delay(500); RotateRt(35); delay(1100);
+    gState = LineFollow;
+  }
+  <span class="kw">else if</span> (Lcolor == BoxColor &amp;&amp; BoxColor == 2) { <span class="cm">// Found blue line</span>
+    delay(500); RotateLft(35); delay(1100);
+    gState = LineFollow;
+  }
+  <span class="kw">else</span> MovFWD(35);
+}
+
+<span class="cm">// Navigates to the drop platform and releases the box</span>
+<span class="kw">void</span> <span class="fn">LinePlace</span>() {
+  <span class="kw">if</span> (Lcolor==BoxColor &amp;&amp; Mcolor==BoxColor &amp;&amp; Rcolor==BoxColor &amp;&amp; TurnCount==0) {
+    MovFWD(35); delay(400);
+    (gSize==1) ? RotateLft(35) : RotateRt(35); <span class="cm">// Size determines drop side</span>
+    delay(1200); TurnCount++;
+  } <span class="kw">else if</span> (distance &lt; 5) {
+    Stop(); delay(500);
+    <span class="cm">// Open gripper to release box</span>
+    actualPosition = 170;
+    val1 = map(actualPosition, 0, 300, 0, 180);
+    Gripper.write(val1); delay(100);
+    <span class="cm">// Back up, realign, return to start path</span>
+    MovBKWD(35); delay(500);
+    RotateLft(35); delay(2400);
+    MovFWD(35); delay(1200);
+    gState = End;
+  } <span class="kw">else</span> {
+    LineFollowing(); <span class="cm">// Keep following line to platform</span>
+  }
+}</pre></div>
+
+        <!-- ObstacleAvoidance.ino -->
+        <div class="code-panel" id="tab-obstacle"><pre>
+<span class="cm">/*
+ * Obstacle Avoidance — separate task from payload transport.
+ * The robot navigates a walled arena, finds gaps using the
+ * ultrasonic sensor, avoids crossing white boundary lines,
+ * and stops when it reaches the green finish line.
+ */</span>
+
+<span class="kw">void</span> <span class="fn">ObstacleSetup</span>() {
+  <span class="cm">// Shares the same ultrasonic (Trig/Echo) and color sensors</span>
+  <span class="cm">// as the main task — no additional hardware needed</span>
+}
+
+<span class="kw">void</span> <span class="fn">ObstacleAvoidance</span>() {
+  ColorSensor();   <span class="cm">// Read boundary and finish lines</span>
+  Ultrasonic();    <span class="cm">// Read distance to walls/obstacles</span>
+
+  <span class="kw">if</span> (Lcolor==3 || Mcolor==3 || Rcolor==3) {
+    Stop(); <span class="cm">// Green line detected — task complete</span>
+    gState = StopProgram;
+    <span class="kw">return</span>;
+  }
+
+  <span class="kw">if</span> (Lcolor==4 || Rcolor==4) {
+    <span class="cm">// White boundary detected — steer away</span>
+    (Lcolor==4) ? RotateRt(35) : RotateLft(35);
+    delay(300);
+    <span class="kw">return</span>;
+  }
+
+  <span class="kw">if</span> (distance &lt; 15) {
+    <span class="cm">// Obstacle ahead — scan for open gap</span>
+    Stop(); delay(200);
+    StrafeLft(35); delay(400);   <span class="cm">// Try left gap</span>
+    Ultrasonic();
+    <span class="kw">if</span> (distance &lt; 15) {
+      StrafeRt(35); delay(800);  <span class="cm">// Try right gap</span>
+    }
+  } <span class="kw">else</span> {
+    MovFWD(40); <span class="cm">// Clear path — advance</span>
+  }
+}
+
+<span class="cm">// Note: strafing is unique to omni-wheel drive —
+// the robot slides sideways without rotating,
+// allowing it to slip through narrow gaps cleanly.</span></pre></div>
+
+      </div>
+    </details>
+
+    <script>
+    function showTab(e, id) {
+      const viewer = e.target.closest('.code-viewer');
+      viewer.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+      viewer.querySelectorAll('.code-panel').forEach(p => p.classList.remove('active'));
+      e.target.classList.add('active');
+      document.getElementById(id).classList.add('active');
+    }
+    </script>
 
     <div class="video-wrap">
       <iframe
