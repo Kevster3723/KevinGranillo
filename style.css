@@ -5,13 +5,13 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
-  --bg:        #0a0f1a;
-  --bg2:       #111827;
-  --border:    #1e2d45;
-  --accent:    #00c2ff;
-  --accent2:   #0077aa;
-  --text:      #e2e8f0;
-  --muted:     #64748b;
+  --bg:        #ffffff;
+  --bg2:       #f8f9fb;
+  --border:    #e2e6ec;
+  --accent:    #0070f3;
+  --accent2:   #0050b3;
+  --text:      #1a1f2e;
+  --muted:     #6b7280;
   --mono:      'IBM Plex Mono', monospace;
   --sans:      'Inter', sans-serif;
 }
@@ -42,7 +42,7 @@ nav {
   justify-content: space-between;
   padding: 0 2rem;
   height: 60px;
-  background: rgba(10, 15, 26, 0.92);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
